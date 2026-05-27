@@ -2,7 +2,7 @@
 
 Herramienta web para calcular la cuota mensual real de un crédito hipotecario en El Salvador, incluyendo seguros obligatorios (vida y daños).
 
-🔗 **[Abrir calculadora](https://tuusuario.github.io/hipoteca-sv)**
+🔗 **[Abrir calculadora](https://luisom13.github.io/calculadora-hipotecaria-sv)**
 
 ---
 
