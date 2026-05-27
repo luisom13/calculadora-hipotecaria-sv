@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hipoteca SV">
+<title>Calculadora Hipotecaria · El Salvador</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1a56e8;--blue-dark: #0f3eb5;--blue-light: #e8efff;--green: #00c070;--gold: #f5a623;--gold-bg: #fff8ec;--bg: #f0f4ff;--card: #ffffff;--text: #0d1b2a;--muted: #6b7a99;--border: #dde4f5;--radius: 18px;--radius-sm: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 40px; overflow-x: hidden; }
+  .header { background: linear-gradient(135deg, #1a56e8 0%, #0d3baf 60%, #061e7a 100%); padding: 54px 20px 32px; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -60px; right: -60px; width: 220px; height: 220px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+  .header::after { content: ''; position: absolute; bottom: -40px; left: 40px; width: 140px; height: 140px; border-radius: 50%; background: rgba(255,255,255,0.04); }
+  .flag-stripe { display: flex; gap: 4px; margin-bottom: 16px; }
+  .flag-stripe span { height: 4px; border-radius: 2px; flex: 1; }
+  .flag-stripe span:nth-child(1) { background: #003a8c; }
+  .flag-stripe span:nth-child(2) { background: #ffffff; }
+  .flag-stripe span:nth-child(3) { background: #003a8c; }
+  .header h1 { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 6px; position: relative; }
+  .header p { font-size: 13px; color: rgba(255,255,255,0.65); position: relative; }
+  .badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border-radius: 20px; margin-bottom: 10px; }
+  .container { padding: 20px 16px; display: flex; flex-direction: column; gap: 16px; }
+  .card { background: var(--card); border-radius: var(--radius); padding: 20px; box-shadow: 0 2px 12px rgba(26,86,232,0.08); border: 1px solid var(--border); }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+  .card-title::before { content: ''; display: block; width: 4px; height: 16px; background: var(--blue); border-radius: 2px; }
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.3px; }
+  .input-wrap { display: flex; align-items: center; background: #f5f7ff; border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; transition: border-color 0.2s; }
+  .input-wrap:focus-within { border-color: var(--blue); background: #fff; box-shadow: 0 0 0 3px rgba(26,86,232,0.1); }
+  .input-prefix { padding: 0 10px; font-size: 14px; font-weight: 600; color: var(--blue); background: rgba(26,86,232,0.07); height: 46px; display: flex; align-items: center; border-right: 1px solid var(--border); white-space: nowrap; }
+  .input-suffix { padding: 0 10px; font-size: 13px; color: var(--muted); background: transparent; border-left: 1px solid var(--border); height: 46px; display: flex; align-items: center; }
+  input[type="number"], input[type="range"] { flex: 1; border: none; background: transparent; padding: 0 12px; height: 46px; font-size: 15px; font-weight: 500; font-family: 'DM Sans', sans-serif; color: var(--text); outline: none; min-width: 0; -webkit-appearance: none; }
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input[type="range"] { width: 100%; height: auto; padding: 0 12px; cursor: pointer; accent-color: var(--blue); }
+  .range-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-top: 2px; padding: 0 12px; }
+  .banco-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .banco-btn { padding: 10px 8px; border: 1.5px solid var(--border); border-radius: 10px; background: #f5f7ff; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; color: var(--muted); cursor: pointer; transition: all 0.18s; text-align: center; line-height: 1.3; }
+  .banco-btn.active { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+  .banco-btn .banco-rate { display: block; font-size: 13px; font-weight: 700; margin-top: 2px; color: var(--blue-dark); }
+  .banco-btn.active .banco-rate { color: var(--blue); }
+  .seguro-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; font-size: 13px; }
+  .seguro-vida { background: var(--blue-light); }
+  .seguro-danos { background: var(--gold-bg); }
+  .seguro-label { font-weight: 500; color: var(--text); }
+  .seguro-amount { font-weight: 700; color: var(--blue-dark); font-family: 'Syne', sans-serif; font-size: 14px; }
+  .seguro-danos .seguro-amount { color: #9a6a00; }
+  .result-card { background: linear-gradient(135deg, #1a56e8 0%, #0d3baf 100%); border-radius: var(--radius); padding: 24px 20px; box-shadow: 0 8px 30px rgba(26,86,232,0.35); position: relative; overflow: hidden; }
+  .result-card::after { content: '$'; position: absolute; right: -20px; top: -20px; font-size: 130px; font-family: 'Syne', sans-serif; font-weight: 800; color: rgba(255,255,255,0.05); line-height: 1; }
+  .result-label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
+  .result-amount { font-family: 'Syne', sans-serif; font-size: 46px; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 4px; }
+  .result-amount span { font-size: 22px; font-weight: 400; opacity: 0.7; }
+  .result-sub { font-size: 12px; color: rgba(255,255,255,0.55); margin-bottom: 20px; }
+  .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .result-mini { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.15); }
+  .result-mini-label { font-size: 10px; color: rgba(255,255,255,0.55); margin-bottom: 4px; }
+  .result-mini-val { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; color: #fff; }
+  .breakdown { display: flex; flex-direction: column; gap: 10px; }
+  .brow { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 10px; background: #f5f7ff; }
+  .brow-left { display: flex; align-items: center; gap: 10px; }
+  .brow-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .brow-name { font-size: 13px; font-weight: 500; }
+  .brow-name small { display: block; font-size: 10px; color: var(--muted); }
+  .brow-val { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+  .brow-pct { font-size: 10px; color: var(--muted); text-align: right; }
+  .nota { background: var(--gold-bg); border: 1px solid #f5c65a44; border-radius: 12px; padding: 12px 14px; font-size: 11.5px; color: #7a5400; line-height: 1.5; display: flex; gap: 8px; align-items: flex-start; }
+  .nota-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .calc-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%); color: #fff; border: none; border-radius: var(--radius-sm); font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(26,86,232,0.4); transition: transform 0.15s; }
+  .calc-btn:active { transform: scale(0.97); }
+  .donut-wrap { display: flex; align-items: center; gap: 16px; padding-top: 4px; }
+  .donut-svg { flex-shrink: 0; }
+  .donut-legend { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .legend-label { color: var(--muted); flex: 1; }
+  .legend-val { font-weight: 600; color: var(--text); }
+  @supports(padding: max(0px)) {
+    body { padding-bottom: max(40px, env(safe-area-inset-bottom)); }
+    .header { padding-top: max(54px, env(safe-area-inset-top) + 20px); }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="flag-stripe"><span></span><span></span><span></span></div>
+  <div class="badge">🇸🇻 El Salvador</div>
+  <h1>Calculadora<br>Hipotecaria</h1>
+  <p>Cuota mensual real con seguros incluidos</p>
+</div>
+<div class="container">
+  <div class="card">
+    <div class="card-title">Datos de la Vivienda</div>
+    <div class="field">
+      <label>Precio de la vivienda</label>
+      <div class="input-wrap">
+        <span class="input-prefix">USD $</span>
+        <input type="number" id="precio" value="80000" min="1000" max="750000" step="1000" oninput="calcular()">
+      </div>
+    </div>
+    <div class="field">
+      <label>Prima inicial — 0% si no se requiere enganche</label>
+      <div class="input-wrap">
+        <input type="range" id="primaSlider" min="0" max="40" value="20" step="1" oninput="syncPrima(this.value)">
+      </div>
+      <div class="range-labels">
+        <span>0%</span>
+        <span id="primaLabel" style="font-weight:700;color:var(--blue)">20% · $16,000</span>
+        <span>40%</span>
+      </div>
+      <div class="input-wrap" style="margin-top:8px">
+        <span class="input-prefix">%</span>
+        <input type="number" id="primaPct" value="20" min="0" max="40" step="1" oninput="syncPrimaPct(this.value)">
+      </div>
+    </div>
+    <div class="field">
+      <label>Plazo del préstamo</label>
+      <div class="input-wrap">
+        <input type="number" id="años" value="20" min="5" max="30" step="1" oninput="calcular()">
+        <span class="input-suffix">años</span>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Banco y Tasa de Interés</div>
+    <div class="banco-grid">
+      <button class="banco-btn" onclick="setBanco(6.75)" id="btn-agri">Banco Agrícola<span class="banco-rate">6.75%</span></button>
+      <button class="banco-btn active" onclick="setBanco(6.95)" id="btn-hipora">Banco Hipotecario<span class="banco-rate">6.95%</span></button>
+      <button class="banco-btn" onclick="setBanco(7.25)" id="btn-pro">BAC / Promerica<span class="banco-rate">7.25%</span></button>
+      <button class="banco-btn" onclick="setBanco(7.50)" id="btn-scotia">Scotiabank SV<span class="banco-rate">7.50%</span></button>
+    </div>
+    <div class="field" style="margin-top:14px">
+      <label>O ingresa tu tasa personalizada</label>
+      <div class="input-wrap">
+        <span class="input-prefix">%</span>
+        <input type="number" id="tasa" value="6.95" min="4" max="15" step="0.05" oninput="clearBanco(); calcular()">
+        <span class="input-suffix">anual</span>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Seguros (obligatorios en SV)</div>
+    <div id="seguros-display"></div>
+    <div class="nota">
+      <span class="nota-icon">ℹ️</span>
+      <span>En El Salvador, <strong>todos los bancos exigen</strong> seguro de deuda (vida) y seguro de daños (incendio/terremoto) como requisito para aprobar un crédito hipotecario. Se incluyen en la cuota mensual.</span>
+    </div>
+  </div>
+  <button class="calc-btn" onclick="calcular()">Calcular Cuota Mensual</button>
+  <div class="result-card">
+    <div class="result-label">Cuota mensual total estimada</div>
+    <div class="result-amount" id="cuota-total"><span>$</span>0</div>
+    <div class="result-sub" id="cuota-sub">Completa los datos y presiona calcular</div>
+    <div class="result-grid">
+      <div class="result-mini"><div class="result-mini-label">Monto del préstamo</div><div class="result-mini-val" id="monto-prestamo">$0</div></div>
+      <div class="result-mini"><div class="result-mini-label">Total a pagar (vida del crédito)</div><div class="result-mini-val" id="total-pagar">$0</div></div>
+      <div class="result-mini"><div class="result-mini-label">Total intereses pagados</div><div class="result-mini-val" id="total-intereses">$0</div></div>
+      <div class="result-mini"><div class="result-mini-label">Prima inicial requerida</div><div class="result-mini-val" id="prima-total-mini">$0</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Desglose de la Cuota</div>
+    <div class="breakdown" id="breakdown"></div>
+    <div style="margin-top:16px">
+      <div class="donut-wrap">
+        <svg class="donut-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="35" fill="none" stroke="#eef1fa" stroke-width="14"/>
+          <circle id="d-capital" cx="45" cy="45" r="35" fill="none" stroke="#1a56e8" stroke-width="14" stroke-dasharray="0 220" stroke-dashoffset="55" style="transition:stroke-dasharray 0.6s"/>
+          <circle id="d-interes" cx="45" cy="45" r="35" fill="none" stroke="#00c070" stroke-width="14" stroke-dasharray="0 220" stroke-dashoffset="55" style="transition:stroke-dasharray 0.6s"/>
+          <circle id="d-seguros" cx="45" cy="45" r="35" fill="none" stroke="#f5a623" stroke-width="14" stroke-dasharray="0 220" stroke-dashoffset="55" style="transition:stroke-dasharray 0.6s"/>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-item"><span class="legend-dot" style="background:#1a56e8"></span><span class="legend-label">Capital</span><span class="legend-val" id="l-capital">—</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#00c070"></span><span class="legend-label">Intereses</span><span class="legend-val" id="l-interes">—</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#f5a623"></span><span class="legend-label">Seguros</span><span class="legend-val" id="l-seguros">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nota">
+    <span class="nota-icon">📋</span>
+    <span>Las tasas de seguros usadas son estimaciones típicas del mercado salvadoreño. El <strong>seguro de deuda (vida)</strong> se calcula al <strong>0.038% mensual</strong> sobre el saldo del préstamo, y el <strong>seguro de daños</strong> al <strong>0.025% mensual</strong> sobre el valor de la construcción (~70% del precio). Consulta con tu banco para los valores exactos.</span>
+  </div>
+</div>
+<script>
+  function fmt(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+  function fmtK(n) { if (n >= 1000000) return '$' + (n/1000000).toFixed(2) + 'M'; if (n >= 1000) return '$' + (n/1000).toFixed(1) + 'k'; return fmt(n); }
+
+  function setBanco(tasa) {
+    document.getElementById('tasa').value = tasa.toFixed(2);
+    document.querySelectorAll('.banco-btn').forEach(b => b.classList.remove('active'));
+    const mapa = {6.75:'btn-agri', 6.95:'btn-hipora', 7.25:'btn-pro', 7.50:'btn-scotia'};
+    if (mapa[tasa]) document.getElementById(mapa[tasa]).classList.add('active');
+    calcular();
+  }
+  function clearBanco() { document.querySelectorAll('.banco-btn').forEach(b => b.classList.remove('active')); }
+
+  function syncPrima(v) {
+    document.getElementById('primaPct').value = v;
+    updatePrimaLabel();
+    calcular();
+  }
+  function syncPrimaPct(v) {
+    let val = Math.min(40, Math.max(0, parseInt(v) || 0));
+    document.getElementById('primaSlider').value = val;
+    document.getElementById('primaPct').value = val;
+    updatePrimaLabel();
+    calcular();
+  }
+  function updatePrimaLabel() {
+    const precio = parseFloat(document.getElementById('precio').value) || 0;
+    const pct = parseFloat(document.getElementById('primaSlider').value);
+    const primaUSD = precio * pct / 100;
+    const label = pct === 0
+      ? '0% · Sin prima'
+      : pct + '% · $' + primaUSD.toLocaleString('es-SV', {minimumFractionDigits:0, maximumFractionDigits:0});
+    document.getElementById('primaLabel').textContent = label;
+  }
+
+  function calcular() {
+    const precio = parseFloat(document.getElementById('precio').value) || 0;
+    const primaPct = parseFloat(document.getElementById('primaSlider').value);
+    const años = parseFloat(document.getElementById('años').value) || 20;
+    const tasaAnual = parseFloat(document.getElementById('tasa').value) || 6.95;
+
+    const prima = precio * primaPct / 100;
+    const prestamo = precio - prima;
+    const meses = años * 12;
+    const r = tasaAnual / 100 / 12;
+
+    let cuotaBase = 0;
+    if (r > 0 && meses > 0 && prestamo > 0) {
+      cuotaBase = prestamo * r * Math.pow(1+r, meses) / (Math.pow(1+r, meses) - 1);
+    }
+
+    const seguroVida = prestamo * 0.00038;
+    const seguroDanos = precio * 0.70 * 0.00025;
+    const totalSeguros = seguroVida + seguroDanos;
+    const cuotaTotal = cuotaBase + totalSeguros;
+    const interesMes1 = prestamo * r;
+    const capitalMes1 = cuotaBase - interesMes1;
+    const totalIntereses = cuotaBase * meses - prestamo;
+
+    updatePrimaLabel();
+
+    document.getElementById('cuota-total').innerHTML = '<span>$</span>' + cuotaTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    document.getElementById('cuota-sub').textContent = 'Capital + intereses + seguros · ' + años + ' años · ' + tasaAnual + '% anual';
+    document.getElementById('monto-prestamo').textContent = fmtK(prestamo);
+    document.getElementById('total-pagar').textContent = fmtK(cuotaTotal * meses);
+    document.getElementById('total-intereses').textContent = fmtK(totalIntereses);
+    document.getElementById('prima-total-mini').textContent = primaPct === 0 ? 'Sin prima' : fmtK(prima);
+
+    document.getElementById('seguros-display').innerHTML = `
+      <div class="seguro-item seguro-vida"><div><div class="seguro-label">Seguro de Deuda (Vida)</div><small style="color:var(--muted)">0.038%/mes · saldo préstamo</small></div><div class="seguro-amount">${fmt(seguroVida)}/mes</div></div>
+      <div class="seguro-item seguro-danos" style="margin-bottom:12px"><div><div class="seguro-label">Seguro de Daños</div><small style="color:var(--muted)">Incendio/terremoto · construcción</small></div><div class="seguro-amount">${fmt(seguroDanos)}/mes</div></div>`;
+
+    const pC = cuotaTotal>0?capitalMes1/cuotaTotal*100:0;
+    const pI = cuotaTotal>0?interesMes1/cuotaTotal*100:0;
+    const pS = cuotaTotal>0?totalSeguros/cuotaTotal*100:0;
+
+    document.getElementById('breakdown').innerHTML = `
+      <div class="brow"><div class="brow-left"><span class="brow-dot" style="background:#1a56e8"></span><div class="brow-name">Capital<small>Amortización del préstamo</small></div></div><div><div class="brow-val" style="color:#1a56e8">${fmt(capitalMes1)}</div><div class="brow-pct">${pC.toFixed(1)}%</div></div></div>
+      <div class="brow"><div class="brow-left"><span class="brow-dot" style="background:#00c070"></span><div class="brow-name">Intereses<small>Primera cuota (máximo inicial)</small></div></div><div><div class="brow-val" style="color:#00c070">${fmt(interesMes1)}</div><div class="brow-pct">${pI.toFixed(1)}%</div></div></div>
+      <div class="brow"><div class="brow-left"><span class="brow-dot" style="background:#f5a623"></span><div class="brow-name">Seguros<small>Vida + daños (obligatorio)</small></div></div><div><div class="brow-val" style="color:#9a6a00">${fmt(totalSeguros)}</div><div class="brow-pct">${pS.toFixed(1)}%</div></div></div>`;
+
+    document.getElementById('l-capital').textContent = fmt(capitalMes1);
+    document.getElementById('l-interes').textContent = fmt(interesMes1);
+    document.getElementById('l-seguros').textContent = fmt(totalSeguros);
+
+    const circ = 219.9, gap = 2;
+    const capArc = cuotaTotal>0?capitalMes1/cuotaTotal*circ:0;
+    const intArc = cuotaTotal>0?interesMes1/cuotaTotal*circ:0;
+    const segArc = cuotaTotal>0?totalSeguros/cuotaTotal*circ:0;
+    const dc=document.getElementById('d-capital'), di=document.getElementById('d-interes'), ds=document.getElementById('d-seguros');
+    dc.setAttribute('stroke-dasharray',(capArc-gap)+' '+(circ-capArc+gap)); dc.setAttribute('stroke-dashoffset','55');
+    di.setAttribute('stroke-dasharray',(intArc-gap)+' '+(circ-intArc+gap)); di.setAttribute('stroke-dashoffset',55-capArc);
+    ds.setAttribute('stroke-dasharray',(segArc-gap)+' '+(circ-segArc+gap)); ds.setAttribute('stroke-dashoffset',55-capArc-intArc);
+  }
+  calcular();
+</script>
+</body>
+</html>
